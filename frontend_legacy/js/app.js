@@ -281,4 +281,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('salary-month').addEventListener('change', loadSalary);
   // Attendance date change
   document.getElementById('attendance-date').addEventListener('change', loadAttendanceTable);
+
+  // Register Service Worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registered:', registration);
+      })
+      .catch(error => {
+        console.log('Service Worker registration failed:', error);
+      });
+  }
 });
