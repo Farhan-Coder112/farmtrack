@@ -1,5 +1,5 @@
 /* api.js — Centralized API client */
-const API = 'http://localhost:5000/api';
+const API = 'https://farhan1723.pythonanywhere.com/api';
 
 function getToken() {
   return localStorage.getItem('farm_token');
