@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FarmTrack Test</title>
+</head>
+<body>
+    <h1>FarmTrack API Test</h1>
+    
+    <h2>Testing API Endpoints</h2>
+    
+    <button onclick="testAPI()">Test API</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        async function testAPI() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Testing API...</p>';
+            
+            try {
+                // Test API info
+                const apiResponse = await fetch('http://localhost:5000/api');
+                const apiData = await apiResponse.json();
+                
+                // Test workers
+                const workersResponse = await fetch('http://localhost:5000/api/workers');
+                const workersData = await workersResponse.json();
+                
+                // Test tasks
+                const tasksResponse = await fetch('http://localhost:5000/api/tasks');
+                const tasksData = await tasksResponse.json();
+                
+                // Test expenses
+                const expensesResponse = await fetch('http://localhost:5000/api/expenses');
+                const expensesData = await expensesResponse.json();
+                
+                // Test inventory
+                const inventoryResponse = await fetch('http://localhost:5000/api/inventory');
+                const inventoryData = await inventoryResponse.json();
+                
+                // Test dashboard
+                const dashboardResponse = await fetch('http://localhost:5000/api/dashboard/summary');
+                const dashboardData = await dashboardResponse.json();
+                
+                results.innerHTML = `
+                    <h3>API Test Results:</h3>
+                    <p><strong>API Info:</strong> ${JSON.stringify(apiData)}</p>
+                    <p><strong>Workers:</strong> ${JSON.stringify(workersData)}</p>
+                    <p><strong>Tasks:</strong> ${JSON.stringify(tasksData)}</p>
+                    <p><strong>Expenses:</strong> ${JSON.stringify(expensesData)}</p>
+                    <p><strong>Inventory:</strong> ${JSON.stringify(inventoryData)}</p>
+                    <p><strong>Dashboard:</strong> ${JSON.stringify(dashboardData)}</p>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

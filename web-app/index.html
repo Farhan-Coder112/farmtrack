@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FarmTrack - Farm Management System</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .header {
+        background: #4CAF50;
+        color: white;
+        padding: 20px;
+        border-radius: 8px 8px 0 0;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .nav {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .nav button {
+        padding: 10px 20px;
+        background: #2E7D32;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .nav button:hover {
+        background: #388E3C;
+      }
+      .nav button.active {
+        background: #8BC34A;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🚜 FarmTrack</h1>
+        <p>Farm Management System</p>
+      </div>
+      
+      <div class="nav">
+        <button class="active" onclick="showDashboard()">Dashboard</button>
+        <button onclick="showWorkers()">Workers</button>
+        <button onclick="showTasks()">Tasks</button>
+        <button onclick="showExpenses()">Expenses</button>
+        <button onclick="showInventory()">Inventory</button>
+      </div>
+      
+      <div id="content">
+        <div id="dashboard-content">
+          <h2>Dashboard</h2>
+          <p>Welcome to FarmTrack! Your Farm Management System</p>
+          
+          <div id="dashboard-stats">
+            <p>Loading dashboard data...</p>
+          </div>
+          
+          <p>Access your complete farm management tools:</p>
+          <ul>
+            <li>Worker Management - Add and manage farm workers</li>
+            <li>Task Tracking - Create and assign tasks</li>
+            <li>Expense Management - Track costs and expenses</li>
+            <li>Inventory Control - Monitor supplies and stock</li>
+            <li>Dashboard - Overview of all operations</li>
+          </ul>
+          <p><strong>Server Status:</strong> <span id="server-status">Checking...</span></p>
+        </div>
+        
+        <div id="workers-content" style="display:none;">
+          <h2>Manage Workers</h2>
+          <div id="workers-list">
+            <p>Loading workers...</p>
+          </div>
+          <button onclick="showAddWorkerForm()">Add New Worker</button>
+          <div id="add-worker-form" style="display:none;">
+            <h3>Add Worker</h3>
+            <input type="text" id="worker-name" placeholder="Worker Name">
+            <input type="text" id="worker-phone" placeholder="Phone">
+            <input type="text" id="worker-role" placeholder="Role">
+            <input type="number" id="worker-wage" placeholder="Daily Wage">
+            <button onclick="addWorker()">Save Worker</button>
+            <button onclick="hideAddWorkerForm()">Cancel</button>
+          </div>
+        </div>
+        
+        <div id="tasks-content" style="display:none;">
+          <h2>Manage Tasks</h2>
+          <div id="tasks-list">
+            <p>Loading tasks...</p>
+          </div>
+          <button onclick="showAddTaskForm()">Add New Task</button>
+          <div id="add-task-form" style="display:none;">
+            <h3>Add Task</h3>
+            <input type="text" id="task-title" placeholder="Task Title">
+            <input type="text" id="task-description" placeholder="Description">
+            <select id="task-status">
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+            <button onclick="addTask()">Save Task</button>
+            <button onclick="hideAddTaskForm()">Cancel</button>
+          </div>
+        </div>
+        
+        <div id="expenses-content" style="display:none;">
+          <h2>Manage Expenses</h2>
+          <div id="expenses-list">
+            <p>Loading expenses...</p>
+          </div>
+          <button onclick="showAddExpenseForm()">Add New Expense</button>
+          <div id="add-expense-form" style="display:none;">
+            <h3>Add Expense</h3>
+            <input type="text" id="expense-category" placeholder="Category">
+            <input type="number" id="expense-amount" placeholder="Amount">
+            <input type="text" id="expense-description" placeholder="Description">
+            <button onclick="addExpense()">Save Expense</button>
+            <button onclick="hideAddExpenseForm()">Cancel</button>
+          </div>
+        </div>
+        
+        <div id="inventory-content" style="display:none;">
+          <h2>Manage Inventory</h2>
+          <div id="inventory-list">
+            <p>Loading inventory...</p>
+          </div>
+          <button onclick="showAddInventoryForm()">Add New Item</button>
+          <div id="add-inventory-form" style="display:none;">
+            <h3>Add Inventory Item</h3>
+            <input type="text" id="inventory-name" placeholder="Item Name">
+            <input type="number" id="inventory-quantity" placeholder="Quantity">
+            <input type="text" id="inventory-unit" placeholder="Unit">
+            <button onclick="addInventory()">Save Item</button>
+            <button onclick="hideAddInventoryForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      const API_BASE = '/api';
+      
+      function showSection(sectionId) {
+        // Hide all sections
+        document.querySelectorAll('[id$="-content"]').forEach(el => el.style.display = 'none');
+        
+        // Show selected section
+        const section = document.getElementById(sectionId + '-content');
+        if (section) {
+          section.style.display = 'block';
+        }
+        
+        // Update active nav button
+        document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[onclick="show${sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}"]`).classList.add('active');
+      }
+      
+      function showDashboard() { showSection('dashboard'); }
+      function showWorkers() { showSection('workers'); }
+      function showTasks() { showSection('tasks'); }
+      function showExpenses() { showSection('expenses'); }
+      function showInventory() { showSection('inventory'); }
+      
+      // Check server status
+      async function checkServerStatus() {
+        try {
+          const response = await fetch(API_BASE + '/dashboard/summary');
+          const data = await response.json();
+          document.getElementById('server-status').innerHTML = 
+            data.error ? '❌ Error' : '✅ Connected';
+        } catch (error) {
+          document.getElementById('server-status').innerHTML = '❌ Connection Error';
+        }
+      }
+      
+      // Form functions
+      function showAddWorkerForm() {
+        document.getElementById('add-worker-form').style.display = 'block';
+      }
+      
+      function hideAddWorkerForm() {
+        document.getElementById('add-worker-form').style.display = 'none';
+      }
+      
+      function showAddTaskForm() {
+        document.getElementById('add-task-form').style.display = 'block';
+      }
+      
+      function hideAddTaskForm() {
+        document.getElementById('add-task-form').style.display = 'none';
+      }
+      
+      function showAddExpenseForm() {
+        document.getElementById('add-expense-form').style.display = 'block';
+      }
+      
+      function hideAddExpenseForm() {
+        document.getElementById('add-expense-form').style.display = 'none';
+      }
+      
+      function showAddInventoryForm() {
+        document.getElementById('add-inventory-form').style.display = 'block';
+      }
+      
+      function hideAddInventoryForm() {
+        document.getElementById('add-inventory-form').style.display = 'none';
+      }
+      
+      // API functions
+      async function loadWorkers() {
+        try {
+          const response = await fetch(API_BASE + '/workers/');
+          const result = await response.json();
+          const workers = result.error ? [] : result;
+          const workersList = document.getElementById('workers-list');
+          
+          if (workers.length === 0) {
+            workersList.innerHTML = '<p>No workers found. Add your first worker!</p>';
+          } else {
+            workersList.innerHTML = workers.map(worker => `
+              <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0;">
+                <strong>${worker.name || 'Unknown'}</strong> - ${worker.role || 'No role'}<br>
+                Phone: ${worker.phone || 'No phone'}<br>
+                Daily Wage: $${worker.daily_wage || 0}
+              </div>
+            `).join('');
+          }
+        } catch (error) {
+          document.getElementById('workers-list').innerHTML = '<p>Error loading workers: ' + error.message + '</p>';
+        }
+      }
+      
+      async function loadTasks() {
+        try {
+          const response = await fetch(API_BASE + '/tasks/');
+          const result = await response.json();
+          const tasks = result.error ? [] : result;
+          const tasksList = document.getElementById('tasks-list');
+          
+          if (tasks.length === 0) {
+            tasksList.innerHTML = '<p>No tasks found. Add your first task!</p>';
+          } else {
+            tasksList.innerHTML = tasks.map(task => `
+              <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0;">
+                <strong>${task.title || 'Untitled Task'}</strong><br>
+                Status: ${task.status || 'No status'}<br>
+                ${task.description ? 'Description: ' + task.description : ''}
+              </div>
+            `).join('');
+          }
+        } catch (error) {
+          document.getElementById('tasks-list').innerHTML = '<p>Error loading tasks: ' + error.message + '</p>';
+        }
+      }
+      
+      async function loadExpenses() {
+        try {
+          const response = await fetch(API_BASE + '/expenses/');
+          const result = await response.json();
+          const expenses = result.error ? [] : result;
+          const expensesList = document.getElementById('expenses-list');
+          
+          if (expenses.length === 0) {
+            expensesList.innerHTML = '<p>No expenses found. Add your first expense!</p>';
+          } else {
+            expensesList.innerHTML = expenses.map(expense => `
+              <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0;">
+                <strong>${expense.category || 'Uncategorized'}</strong><br>
+                Amount: $${expense.amount || 0}<br>
+                ${expense.description ? 'Description: ' + expense.description : ''}
+              </div>
+            `).join('');
+          }
+        } catch (error) {
+          document.getElementById('expenses-list').innerHTML = '<p>Error loading expenses: ' + error.message + '</p>';
+        }
+      }
+      
+      async function loadInventory() {
+        try {
+          const response = await fetch(API_BASE + '/inventory/');
+          const result = await response.json();
+          const inventory = result.error ? [] : result;
+          const inventoryList = document.getElementById('inventory-list');
+          
+          if (inventory.length === 0) {
+            inventoryList.innerHTML = '<p>No inventory items found. Add your first item!</p>';
+          } else {
+            inventoryList.innerHTML = inventory.map(item => `
+              <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0;">
+                <strong>${item.name || 'Unnamed Item'}</strong><br>
+                Quantity: ${item.quantity || 0} ${item.unit || 'units'}<br>
+                ${item.quantity <= (item.min_quantity || 0) ? '<span style="color: red;">Low Stock!</span>' : ''}
+              </div>
+            `).join('');
+          }
+        } catch (error) {
+          document.getElementById('inventory-list').innerHTML = '<p>Error loading inventory: ' + error.message + '</p>';
+        }
+      }
+      
+      // Load data when sections are shown
+      function showDashboard() { 
+        showSection('dashboard'); 
+        checkServerStatus();
+      }
+      
+      function showWorkers() { 
+        showSection('workers'); 
+        loadWorkers();
+      }
+      
+      function showTasks() { 
+        showSection('tasks'); 
+        loadTasks();
+      }
+      
+      function showExpenses() { 
+        showSection('expenses'); 
+        loadExpenses();
+      }
+      
+      function showInventory() { 
+        showSection('inventory'); 
+        loadInventory();
+      }
+      
+      // Load dashboard data
+      async function loadDashboardData() {
+        try {
+          const response = await fetch(API_BASE + '/dashboard/summary/');
+          const data = await response.json();
+          const statsDiv = document.getElementById('dashboard-stats');
+          
+          statsDiv.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+              <div style="background: #4CAF50; color: white; padding: 15px; border-radius: 8px; text-align: center;">
+                <h3>Workers</h3>
+                <p style="font-size: 24px; margin: 0;">${data.workers || 0}</p>
+              </div>
+              <div style="background: #2196F3; color: white; padding: 15px; border-radius: 8px; text-align: center;">
+                <h3>Tasks</h3>
+                <p style="font-size: 24px; margin: 0;">${data.tasks || 0}</p>
+              </div>
+              <div style="background: #FF9800; color: white; padding: 15px; border-radius: 8px; text-align: center;">
+                <h3>Expenses</h3>
+                <p style="font-size: 24px; margin: 0;">${data.expenses || 0}</p>
+              </div>
+              <div style="background: #9C27B0; color: white; padding: 15px; border-radius: 8px; text-align: center;">
+                <h3>Inventory</h3>
+                <p style="font-size: 24px; margin: 0;">${data.inventory || 0}</p>
+              </div>
+            </div>
+          `;
+        } catch (error) {
+          document.getElementById('dashboard-stats').innerHTML = '<p>Error loading dashboard data: ' + error.message + '</p>';
+        }
+      }
+      
+      // Update showDashboard to load data
+      function showDashboard() { 
+        showSection('dashboard'); 
+        checkServerStatus();
+        loadDashboardData();
+      }
+      
+      // Check status on load
+      checkServerStatus();
+      loadDashboardData();
+      setInterval(checkServerStatus, 10000); // Check every 10 seconds
+    </script>
+  </body>
+</html>

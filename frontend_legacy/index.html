@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FarmTrack — Smart Farm Management</title>
+  <meta name="description" content="Manage your farm with ease — track crops, workers, inventory, tasks, and expenses all in one place." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Auth Screen -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-bg">
+      <div class="auth-bg-blob auth-bg-blob-1"></div>
+      <div class="auth-bg-blob auth-bg-blob-2"></div>
+      <div class="auth-bg-blob auth-bg-blob-3"></div>
+    </div>
+    <div class="auth-container">
+      <div class="auth-logo">
+        <span class="auth-logo-icon">🌾</span>
+        <span class="auth-logo-text">FarmTrack</span>
+      </div>
+      <div class="auth-card" id="auth-card">
+        <!-- Login Form -->
+        <div id="login-form">
+          <h1 class="auth-title">Welcome back</h1>
+          <p class="auth-subtitle">Sign in to your farm dashboard</p>
+          <div class="form-group">
+            <label for="login-email">Email address</label>
+            <input type="email" id="login-email" placeholder="farmer@example.com" />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="••••••••" />
+          </div>
+          <div id="login-error" class="auth-error hidden"></div>
+          <button class="btn-primary btn-full" id="login-btn" onclick="handleLogin()">Sign In</button>
+          <p class="auth-switch">Don't have an account? <a href="#" onclick="showRegister()">Create one</a></p>
+        </div>
+        <!-- Register Form -->
+        <div id="register-form" class="hidden">
+          <h1 class="auth-title">Create account</h1>
+          <p class="auth-subtitle">Start managing your farm today</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-name">Full Name</label>
+              <input type="text" id="reg-name" placeholder="John Doe" />
+            </div>
+            <div class="form-group">
+              <label for="reg-phone">Phone</label>
+              <input type="text" id="reg-phone" placeholder="+91 98765 43210" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="reg-email">Email address</label>
+            <input type="email" id="reg-email" placeholder="farmer@example.com" />
+          </div>
+          <div class="form-group">
+            <label for="reg-farm">Farm Name</label>
+            <input type="text" id="reg-farm" placeholder="Green Valley Farm" />
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" placeholder="Create a strong password" />
+          </div>
+          <div id="register-error" class="auth-error hidden"></div>
+          <button class="btn-primary btn-full" id="register-btn" onclick="handleRegister()">Create Account</button>
+          <p class="auth-switch">Already have an account? <a href="#" onclick="showLogin()">Sign in</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Shell -->
+  <div id="app" class="hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <span class="sidebar-logo-icon">🌾</span>
+          <span class="sidebar-logo-text">FarmTrack</span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+          <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span>
+        </a>
+        <a class="nav-item" data-page="crops" onclick="navigate('crops')">
+          <span class="nav-icon">🌱</span><span class="nav-label">Crops</span>
+        </a>
+        <a class="nav-item" data-page="completed-crops" onclick="navigate('completed-crops')">
+          <span class="nav-icon">🌾</span><span class="nav-label">Completed Crops</span>
+        </a>
+        <a class="nav-item" data-page="workers" onclick="navigate('workers')">
+          <span class="nav-icon">👷</span><span class="nav-label">Workers</span>
+        </a>
+        <a class="nav-item" data-page="tasks" onclick="navigate('tasks')">
+          <span class="nav-icon">✅</span><span class="nav-label">Tasks</span>
+        </a>
+        <a class="nav-item" data-page="expenses" onclick="navigate('expenses')">
+          <span class="nav-icon">💰</span><span class="nav-label">Expenses</span>
+        </a>
+        <a class="nav-item" data-page="inventory" onclick="navigate('inventory')">
+          <span class="nav-icon">📦</span><span class="nav-label">Inventory</span>
+        </a>
+        <a class="nav-item" data-page="customers" onclick="navigate('customers')">
+          <span class="nav-icon">👥</span><span class="nav-label">Customers</span>
+        </a>
+        <a class="nav-item" data-page="sales" onclick="navigate('sales')">
+          <span class="nav-icon">💰</span><span class="nav-label">Sales</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info" id="sidebar-user">
+          <div class="user-avatar" id="sidebar-avatar">F</div>
+          <div class="user-details">
+            <div class="user-name" id="sidebar-name">Farmer</div>
+            <div class="user-farm" id="sidebar-farm">Loading...</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="handleLogout()" title="Logout">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <button class="topbar-menu-btn" onclick="toggleSidebar()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title" id="page-title">Dashboard</div>
+        <div class="topbar-actions" id="topbar-actions"></div>
+      </header>
+
+      <!-- Pages -->
+      <div class="page-content">
+        <!-- Dashboard -->
+        <div id="page-dashboard" class="page active">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Farm Overview</h2>
+              <p class="page-subheading" id="dash-date"></p>
+            </div>
+          </div>
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card stat-green">
+              <div class="stat-icon">🌱</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-crops">—</div>
+                <div class="stat-label">Growing Crops</div>
+              </div>
+            </div>
+            <div class="stat-card stat-amber">
+              <div class="stat-icon">🌾</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-completed-crops">—</div>
+                <div class="stat-label">Completed Crops</div>
+              </div>
+            </div>
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">👷</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-workers">—</div>
+                <div class="stat-label">Active Workers</div>
+              </div>
+            </div>
+            <div class="stat-card stat-amber">
+              <div class="stat-icon">💰</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-expenses">—</div>
+                <div class="stat-label">This Month's Spend</div>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">✅</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-tasks">—</div>
+                <div class="stat-label">Pending Tasks</div>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Recent Expenses</h3>
+                <a class="card-link" onclick="navigate('expenses')">View all →</a>
+              </div>
+              <div id="recent-expenses-list" class="activity-list">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Today's Attendance</h3>
+                <a class="card-link" onclick="navigate('workers')">Manage →</a>
+              </div>
+              <div id="today-attendance-list" class="activity-list">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Upcoming Tasks</h3>
+                <a class="card-link" onclick="navigate('tasks')">View all →</a>
+              </div>
+              <div id="upcoming-tasks-list" class="activity-list">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Low Stock Alerts</h3>
+                <a class="card-link" onclick="navigate('inventory')">View →</a>
+              </div>
+              <div id="low-stock-list" class="activity-list">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crops Page -->
+        <div id="page-crops" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Crops</h2>
+              <p class="page-subheading">Track your growing and harvested crops</p>
+            </div>
+            <button class="btn-primary" onclick="openModal('crop-modal')">+ Add Crop</button>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterCrops(null, this)">All</button>
+            <button class="filter-btn" onclick="filterCrops('growing', this)">Growing</button>
+            <button class="filter-btn" onclick="filterCrops('harvested', this)">Harvested</button>
+            <button class="filter-btn" onclick="filterCrops('completed', this)">Completed</button>
+            <button class="filter-btn" onclick="filterCrops('planned', this)">Planned</button>
+          </div>
+          <div id="crops-grid" class="crop-grid">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+
+        <!-- Completed Crops Page -->
+        <div id="page-completed-crops" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Completed Crops</h2>
+              <p class="page-subheading">View and sell your harvested crops</p>
+            </div>
+          </div>
+          <div id="completed-crops-grid" class="crop-grid">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+
+        <!-- Workers Page -->
+        <div id="page-workers" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Workers</h2>
+              <p class="page-subheading">Manage farm staff and attendance</p>
+            </div>
+            <button class="btn-primary" onclick="openModal('worker-modal')">+ Add Worker</button>
+          </div>
+          <div class="tab-bar">
+            <button class="tab-btn active" id="tab-workers-list" onclick="showWorkerTab('list')">Worker List</button>
+            <button class="tab-btn" id="tab-attendance" onclick="showWorkerTab('attendance')">Mark Attendance</button>
+            <button class="tab-btn" id="tab-salary" onclick="showWorkerTab('salary')">Weekly Salary</button>
+          </div>
+          <div id="workers-list-tab">
+            <div id="workers-list" class="workers-grid">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+          <div id="attendance-tab" class="hidden">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Mark Attendance</h3>
+                <div class="date-picker-wrapper">
+                  <input type="date" id="attendance-date" class="input-sm" />
+                </div>
+              </div>
+              <div id="attendance-table-wrapper">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+          <div id="salary-tab" class="hidden">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Weekly Salary Report</h3>
+                <input type="week" id="salary-month" class="input-sm" placeholder="Week (YYYY-WW)" />
+              </div>
+              <div id="salary-table-wrapper">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tasks Page -->
+        <div id="page-tasks" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Tasks</h2>
+              <p class="page-subheading">Organize farm activities and assignments</p>
+            </div>
+            <button class="btn-primary" onclick="openModal('task-modal')">+ Add Task</button>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterTasks(null, this)">All</button>
+            <button class="filter-btn" onclick="filterTasks('pending', this)">Pending</button>
+            <button class="filter-btn" onclick="filterTasks('in_progress', this)">In Progress</button>
+            <button class="filter-btn" onclick="filterTasks('completed', this)">Completed</button>
+          </div>
+          <div id="tasks-list" class="tasks-list">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+
+        <!-- Expenses Page -->
+        <div id="page-expenses" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Expenses</h2>
+              <p class="page-subheading">Track farm spending and budget</p>
+            </div>
+            <button class="btn-primary" onclick="openModal('expense-modal')">+ Add Expense</button>
+          </div>
+          <div class="expense-top">
+            <div class="card expense-summary-card">
+              <div class="expense-month-selector">
+                <input type="month" id="expense-month" class="input-sm" onchange="loadExpenses()" />
+              </div>
+              <div class="expense-total">
+                <span class="expense-total-label">Total Spent</span>
+                <span class="expense-total-amount" id="expense-total">₹0</span>
+              </div>
+              <div id="expense-by-category" class="cat-breakdown"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Expense Records</h3>
+              <div class="filter-bar-inline">
+                <select id="expense-cat-filter" class="input-sm" onchange="loadExpenses()">
+                  <option value="">All Categories</option>
+                  <option value="seeds">Seeds</option>
+                  <option value="fertilizer">Fertilizer</option>
+                  <option value="pesticide">Pesticide</option>
+                  <option value="labor">Labor</option>
+                  <option value="equipment">Equipment</option>
+                  <option value="irrigation">Irrigation</option>
+                  <option value="transport">Transport</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div id="expenses-list" class="table-wrapper">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Page -->
+        <div id="page-inventory" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Inventory</h2>
+              <p class="page-subheading">Manage supplies and stock levels</p>
+            </div>
+            <button class="btn-primary" onclick="openModal('inventory-modal')">+ Add Item</button>
+          </div>
+          <div id="inventory-summary" class="stats-grid" style="margin-bottom:1.5rem">
+            <div class="loading-spinner"></div>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterInventory(null, this)">All</button>
+            <button class="filter-btn" onclick="filterInventory('seeds', this)">Seeds</button>
+            <button class="filter-btn" onclick="filterInventory('fertilizer', this)">Fertilizer</button>
+            <button class="filter-btn" onclick="filterInventory('pesticide', this)">Pesticide</button>
+            <button class="filter-btn" onclick="filterInventory('equipment', this)">Equipment</button>
+            <button class="filter-btn inv-low-btn" onclick="filterInventoryLowStock(this)">⚠️ Low Stock</button>
+          </div>
+          <div id="inventory-list" class="table-wrapper">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+
+        <!-- Customers Page -->
+        <div id="page-customers" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Customers</h2>
+              <p class="page-subheading">Manage your crop buyers and customers</p>
+            </div>
+            <button class="btn-primary" onclick="openModal('customer-modal')">+ Add Customer</button>
+          </div>
+          <div id="customers-list" class="table-wrapper">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+
+        <!-- Sales Page -->
+        <div id="page-sales" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Sales</h2>
+              <p class="page-subheading">Track crop sales and revenue</p>
+            </div>
+            <button class="btn-primary" onclick="openSaleModal()">+ New Sale</button>
+          </div>
+          <div id="sales-summary" class="stats-grid" style="margin-bottom:1.5rem">
+            <div class="loading-spinner"></div>
+          </div>
+          <div class="filter-bar" style="margin-bottom:1rem">
+            <select id="sales-customer-filter" class="input-sm" onchange="filterSalesByCustomer()">
+              <option value="">All Customers</option>
+            </select>
+          </div>
+          <div id="sales-list" class="table-wrapper">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODALS -->
+  <!-- Crop Modal -->
+  <div id="crop-modal" class="modal-overlay hidden" onclick="closeModalOnBg(event,'crop-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="crop-modal-title">Add Crop</h3>
+        <button class="modal-close" onclick="closeModal('crop-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="crop-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>Crop Name *</label>
+            <input type="text" id="crop-name" placeholder="e.g. Wheat" />
+          </div>
+          <div class="form-group">
+            <label>Variety</label>
+            <input type="text" id="crop-variety" placeholder="e.g. HD-2967" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Field Location</label>
+            <input type="text" id="crop-location" placeholder="e.g. North Field" />
+          </div>
+          <div class="form-group">
+            <label>Area (acres)</label>
+            <input type="number" id="crop-area" placeholder="e.g. 5.5" step="0.1" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Field Quantity</label>
+            <input type="number" id="crop-field-quantity" placeholder="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label>Unit</label>
+            <select id="crop-field-unit">
+              <option value="kg">kg</option>
+              <option value="ton">ton</option>
+              <option value="quintal">quintal</option>
+              <option value="bag">bag</option>
+              <option value="piece">piece</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Plant Date</label>
+            <input type="date" id="crop-plant-date" />
+          </div>
+          <div class="form-group">
+            <label>Expected Harvest</label>
+            <input type="date" id="crop-harvest-date" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="crop-status">
+            <option value="growing">Growing</option>
+            <option value="planned">Planned</option>
+            <option value="harvested">Harvested</option>
+            <option value="completed">Completed</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
+        <div class="form-row" id="harvest-quantity-row" style="display:none;">
+          <div class="form-group">
+            <label>Harvest Quantity</label>
+            <input type="number" id="crop-harvest-quantity" placeholder="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label>Unit</label>
+            <select id="crop-harvest-unit">
+              <option value="kg">kg</option>
+              <option value="ton">ton</option>
+              <option value="quintal">quintal</option>
+              <option value="bag">bag</option>
+              <option value="piece">piece</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="crop-notes" rows="2" placeholder="Any notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('crop-modal')">Cancel</button>
+        <button class="btn-primary" onclick="saveCrop()">Save Crop</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Worker Modal -->
+  <div id="worker-modal" class="modal-overlay hidden" onclick="closeModalOnBg(event,'worker-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="worker-modal-title">Add Worker</h3>
+        <button class="modal-close" onclick="closeModal('worker-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="worker-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="worker-name" placeholder="e.g. Raju Kumar" />
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" id="worker-phone" placeholder="+91 98765 43210" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Role</label>
+            <input type="text" id="worker-role" placeholder="e.g. Ploughing, Harvesting" />
+          </div>
+          <div class="form-group">
+            <label>Daily Wage (₹)</label>
+            <input type="number" id="worker-wage" placeholder="e.g. 500" onchange="calculateWeeklyWages()" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Weekly Wages (₹)</label>
+            <input type="text" id="worker-weekly-wages" placeholder="Auto-calculated" readonly style="background: var(--bg-2); color: var(--text-2);" />
+          </div>
+          <div class="form-group">
+            <small style="color: var(--text-3); font-size: 0.85rem; display: block; margin-top: 1.5rem;">
+              * Weekly wages calculated as 6 × daily wage
+            </small>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Join Date</label>
+            <input type="date" id="worker-join-date" />
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="worker-status">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <input type="text" id="worker-address" placeholder="Village / Town" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('worker-modal')">Cancel</button>
+        <button class="btn-primary" onclick="saveWorker()">Save Worker</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Modal -->
+  <div id="task-modal" class="modal-overlay hidden" onclick="closeModalOnBg(event,'task-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="task-modal-title">Add Task</h3>
+        <button class="modal-close" onclick="closeModal('task-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="task-id" />
+        <div class="form-group">
+          <label>Task Title *</label>
+          <input type="text" id="task-title" placeholder="e.g. Apply fertilizer to North Field" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="task-category">
+              <option value="general">General</option>
+              <option value="watering">Watering</option>
+              <option value="harvesting">Harvesting</option>
+              <option value="planting">Planting</option>
+              <option value="spraying">Spraying</option>
+              <option value="equipment">Equipment</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select id="task-priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="task-due-date" />
+          </div>
+          <div class="form-group">
+            <label>Due Time</label>
+            <input type="time" id="task-due-time" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="task-status">
+            <option value="pending">Pending</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Assign Worker</label>
+          <select id="task-worker">
+            <option value="">Unassigned</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="task-description" rows="2" placeholder="Additional details..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('task-modal')">Cancel</button>
+        <button class="btn-primary" onclick="saveTask()">Save Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expense Modal -->
+  <div id="expense-modal" class="modal-overlay hidden" onclick="closeModalOnBg(event,'expense-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="expense-modal-title">Add Expense</h3>
+        <button class="modal-close" onclick="closeModal('expense-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="expense-id" />
+        <div class="form-group">
+          <label>Title *</label>
+          <input type="text" id="expense-title" placeholder="e.g. Urea fertilizer purchase" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="expense-category" onchange="handleExpenseCategoryChange()">
+              <option value="seeds">Seeds</option>
+              <option value="fertilizer">Fertilizer</option>
+              <option value="pesticide">Pesticide</option>
+              <option value="labor">Labor</option>
+              <option value="equipment">Equipment</option>
+              <option value="irrigation">Irrigation</option>
+              <option value="transport">Transport</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Amount (₹) *</label>
+            <input type="number" id="expense-amount" placeholder="e.g. 2500" step="0.01" />
+          </div>
+        </div>
+        <div class="form-row" id="expense-worker-row" style="display: none;">
+          <div class="form-group">
+            <label>Select Worker</label>
+            <select id="expense-worker" onchange="calculateLaborAmount()">
+              <option value="">Select worker...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <small style="color: var(--text-3); font-size: 0.85rem; display: block; margin-top: 1.5rem;">
+              * Amount will auto-calculate based on weekly wages
+            </small>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="expense-date" />
+          </div>
+          <div class="form-group">
+            <label>Payment Method</label>
+            <select id="expense-payment">
+              <option value="cash">Cash</option>
+              <option value="upi">UPI</option>
+              <option value="bank">Bank Transfer</option>
+              <option value="credit">Credit</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="expense-description" rows="2" placeholder="Additional notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('expense-modal')">Cancel</button>
+        <button class="btn-primary" onclick="saveExpense()">Save Expense</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory Modal -->
+  <div id="inventory-modal" class="modal-overlay hidden" onclick="closeModalOnBg(event,'inventory-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="inventory-modal-title">Add Inventory Item</h3>
+        <button class="modal-close" onclick="closeModal('inventory-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="inv-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>Item Name *</label>
+            <input type="text" id="inv-name" placeholder="e.g. NPK Fertilizer" />
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="inv-category">
+              <option value="seeds">Seeds</option>
+              <option value="fertilizer">Fertilizer</option>
+              <option value="pesticide">Pesticide</option>
+              <option value="equipment">Equipment</option>
+              <option value="fuel">Fuel</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" id="inv-quantity" placeholder="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label>Quantity Used</label>
+            <input type="number" id="inv-quantity-used" placeholder="0" step="0.01" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Unit</label>
+            <select id="inv-unit">
+              <option value="kg">kg</option>
+              <option value="litre">litre</option>
+              <option value="bag">bag</option>
+              <option value="piece">piece</option>
+              <option value="ton">ton</option>
+              <option value="box">box</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Min. Quantity (alert level)</label>
+            <input type="number" id="inv-min-qty" placeholder="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label>Unit Price (₹)</label>
+            <input type="number" id="inv-price" placeholder="0" step="0.01" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Supplier</label>
+            <input type="text" id="inv-supplier" placeholder="Supplier name" />
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" id="inv-location" placeholder="Storage location" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Expiry Date</label>
+          <input type="date" id="inv-expiry" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('inventory-modal')">Cancel</button>
+        <button class="btn-primary" onclick="saveInventoryItem()">Save Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Modal -->
+  <div id="customer-modal" class="modal-overlay hidden" onclick="closeModalOnBg(event,'customer-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="customer-modal-title">Add Customer</h3>
+        <button class="modal-close" onclick="closeModal('customer-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="customer-id" />
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" id="customer-name" placeholder="Customer name" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" id="customer-phone" placeholder="Phone number" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="customer-email" placeholder="Email address" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Business Name</label>
+          <input type="text" id="customer-business" placeholder="Business or company name" />
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <textarea id="customer-address" rows="2" placeholder="Customer address"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="customer-notes" rows="2" placeholder="Additional notes"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('customer-modal')">Cancel</button>
+        <button class="btn-primary" onclick="saveCustomer()">Save Customer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Sales Modal -->
+  <div id="customer-sales-modal" class="modal-overlay hidden" onclick="closeModalOnBg(event,'customer-sales-modal')">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="customer-sales-title">Customer Sales</h3>
+        <button class="modal-close" onclick="closeModal('customer-sales-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="customer-sales-list">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sale Modal -->
+  <div id="sale-modal" class="modal-overlay hidden" onclick="closeModalOnBg(event,'sale-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="sale-modal-title">New Sale</h3>
+        <button class="modal-close" onclick="closeModal('sale-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="sale-id" />
+        <input type="hidden" id="sale-crop-id" />
+        <div class="form-group">
+          <label>Customer *</label>
+          <select id="sale-customer">
+            <option value="">Select customer</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Crop Name *</label>
+            <select id="sale-crop-select" onchange="onCropSelect()">
+              <option value="">Select crop or type manually</option>
+            </select>
+            <input type="text" id="sale-crop-name" placeholder="e.g. Wheat" style="margin-top:0.5rem;" />
+          </div>
+          <div class="form-group">
+            <label>Quantity *</label>
+            <input type="number" id="sale-quantity" placeholder="0" step="0.01" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Unit</label>
+            <select id="sale-unit">
+              <option value="kg">kg</option>
+              <option value="ton">ton</option>
+              <option value="quintal">quintal</option>
+              <option value="bag">bag</option>
+              <option value="piece">piece</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price per Unit (₹) *</label>
+            <input type="number" id="sale-price" placeholder="0" step="0.01" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Total Price (₹)</label>
+          <input type="number" id="sale-total" placeholder="0" step="0.01" readonly />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Paid Amount (₹)</label>
+            <input type="number" id="sale-paid-amount" placeholder="0" step="0.01" oninput="calculateRemainingAmount()" />
+          </div>
+          <div class="form-group">
+            <label>Remaining Amount (₹)</label>
+            <input type="number" id="sale-remaining-amount" placeholder="0" step="0.01" readonly />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Sale Date *</label>
+            <input type="date" id="sale-date" />
+          </div>
+          <div class="form-group">
+            <label>Payment Status</label>
+            <select id="sale-payment-status">
+              <option value="pending">Pending</option>
+              <option value="partial">Partial</option>
+              <option value="paid">Paid</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Payment Method</label>
+          <select id="sale-payment-method">
+            <option value="cash">Cash</option>
+            <option value="bank_transfer">Bank Transfer</option>
+            <option value="upi">UPI</option>
+            <option value="credit">Credit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="sale-notes" rows="2" placeholder="Additional notes"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('sale-modal')">Cancel</button>
+        <button class="btn-primary" onclick="saveSale()">Save Sale</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Confirm Dialog -->
+  <div id="confirm-overlay" class="modal-overlay hidden">
+    <div class="modal confirm-modal">
+      <div class="modal-body">
+        <div class="confirm-icon">⚠️</div>
+        <p class="confirm-msg" id="confirm-msg">Are you sure?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="confirm-cancel">Cancel</button>
+        <button class="btn-danger" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/crops.js"></script>
+  <script src="js/workers.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/expenses.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/customers.js"></script>
+  <script src="js/sales.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
