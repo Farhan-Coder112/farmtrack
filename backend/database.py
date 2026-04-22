@@ -115,6 +115,7 @@ def init_db():
             supplier      TEXT,
             location      TEXT,
             expiry_date   TEXT,
+            quantity_used REAL DEFAULT 0,
             created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
