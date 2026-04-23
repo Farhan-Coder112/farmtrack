@@ -49,6 +49,12 @@ def index():
 def api_info():
     return {"message": "🌾 Farm Management API is running!", "version": "1.0.0"}
 
+import traceback
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # return JSON with the error traceback
+    return {"error": str(e), "traceback": traceback.format_exc()}, 500
+
 if __name__ == "__main__":
     init_db()
     app.run(debug=True, host="0.0.0.0", port=5000)
