@@ -11,13 +11,13 @@ function Dashboard({ navigate }) {
 
   const loadDashboard = async () => {
     try {
-      const data = await apiGet('/dashboard/summary');
+      const data = await apiGet('/dashboard/');
       if (data) {
         setStats({
-          crops: data.active_crops ?? '—',
-          workers: data.active_workers ?? '—',
-          expenses: data.current_month_expenses ? `₹${data.current_month_expenses}` : '—',
-          tasks: data.pending_tasks ?? '—'
+          crops: data.crops?.growing ?? '—',
+          workers: data.workers?.active ?? '—',
+          expenses: data.expenses?.this_month ? `₹${data.expenses.this_month}` : '—',
+          tasks: data.tasks?.pending ?? '—'
         });
       }
     } catch (e) {
