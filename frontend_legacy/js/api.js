@@ -18,6 +18,9 @@ async function apiFetch(path, options = {}) {
     return null;
   }
   const data = await res.json().catch(() => ({}));
+  if (data.traceback) {
+    console.error("SERVER TRACEBACK:", data.traceback);
+  }
   if (!res.ok) throw new Error(data.error || data.message || 'Request failed');
   return data;
 }
