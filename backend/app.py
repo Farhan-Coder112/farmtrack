@@ -6,7 +6,7 @@ import os
 
 load_dotenv()
 
-from database import init_db
+from database import init_db, auto_migrate
 from routes.auth import auth_bp
 from routes.crops import crops_bp
 from routes.workers import workers_bp
@@ -41,6 +41,10 @@ app.register_blueprint(weather_bp, url_prefix="/api/weather")
 app.register_blueprint(customers_bp, url_prefix="/api/customers")
 app.register_blueprint(sales_bp, url_prefix="/api/sales")
 
+# Run DB init + migrations on every startup (works with WSGI too)
+init_db()
+auto_migrate()
+
 @app.route("/")
 def index():
     return send_from_directory(FRONTEND_DIR, "index.html")
@@ -56,5 +60,4 @@ def handle_exception(e):
     return {"error": str(e), "traceback": traceback.format_exc()}, 500
 
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True, host="0.0.0.0", port=5000)

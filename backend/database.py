@@ -186,3 +186,39 @@ def init_db():
     conn.commit()
     conn.close()
     print("[OK] Database initialized successfully")
+    auto_migrate()
+
+def auto_migrate():
+    """Safely add any missing columns to existing tables on startup."""
+    conn = get_db()
+    c = conn.cursor()
+
+    # Columns to ensure exist: {table: [(column, definition), ...]}
+    migrations = {
+        "inventory": [
+            ("quantity_used", "REAL DEFAULT 0"),
+            ("updated_at",    "DATETIME DEFAULT CURRENT_TIMESTAMP"),
+            ("min_quantity",  "REAL DEFAULT 0"),
+            ("unit_price",    "REAL DEFAULT 0"),
+            ("supplier",      "TEXT"),
+            ("location",      "TEXT"),
+            ("expiry_date",   "TEXT"),
+        ],
+        "workers": [
+            ("weekly_wages", "REAL DEFAULT 0"),
+        ],
+        "sales": [
+            ("paid_amount",      "REAL DEFAULT 0"),
+            ("remaining_amount", "REAL DEFAULT 0"),
+        ],
+    }
+
+    for table, columns in migrations.items():
+        existing = {row[1] for row in c.execute(f"PRAGMA table_info({table})").fetchall()}
+        for col_name, col_def in columns:
+            if col_name not in existing:
+                print(f"[migrate] Adding {table}.{col_name}")
+                c.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_def}")
+
+    conn.commit()
+    conn.close()
