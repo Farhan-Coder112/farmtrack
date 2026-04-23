@@ -116,12 +116,14 @@ async function showCustomerSales(customerId, customerName) {
 
 async function showCustomerRemainingAmount(customerId, customerName) {
   try {
+    const customer = allCustomers.find(c => c.id === customerId);
+    const customerPhone = customer?.phone || 'N/A';
     const sales = await apiGet(`/sales/customer/${customerId}`);
     const modal = document.getElementById('customer-sales-modal');
     const title = document.getElementById('customer-sales-title');
     const salesList = document.getElementById('customer-sales-list');
     
-    title.textContent = `Remaining Amount for ${customerName}`;
+    title.innerHTML = `Remaining Amount for ${customerName}<br><small style="font-size: 0.9rem; font-weight: normal; color: #666;">📞 ${customerPhone}</small>`;
     
     if (!sales.length) {
       salesList.innerHTML = `
