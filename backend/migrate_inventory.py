@@ -10,13 +10,20 @@ def migrate_inventory():
         cursor.execute("PRAGMA table_info(inventory)")
         columns = [col[1] for col in cursor.fetchall()]
         
-        if 'quantity_used' not in columns:
-            print("Adding quantity_used column...")
-            cursor.execute("ALTER TABLE inventory ADD COLUMN quantity_used REAL DEFAULT 0")
+        expected_columns = {
+            'min_quantity': 'REAL DEFAULT 0',
+            'unit_price': 'REAL DEFAULT 0',
+            'supplier': 'TEXT',
+            'location': 'TEXT',
+            'expiry_date': 'TEXT',
+            'quantity_used': 'REAL DEFAULT 0',
+            'updated_at': 'DATETIME DEFAULT CURRENT_TIMESTAMP'
+        }
         
-        if 'updated_at' not in columns:
-            print("Adding updated_at column...")
-            cursor.execute("ALTER TABLE inventory ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP")
+        for col_name, col_type in expected_columns.items():
+            if col_name not in columns:
+                print(f"Adding {col_name} column...")
+                cursor.execute(f"ALTER TABLE inventory ADD COLUMN {col_name} {col_type}")
         
         conn.commit()
         print("Inventory migration completed successfully!")
