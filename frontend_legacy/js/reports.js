@@ -1,16 +1,12 @@
 /* reports.js - Customer Reports with PDF Generation */
 
-console.log('reports.js loaded');
-
 let reportCustomers = [];
 let selectedReportCustomer = null;
 
 // Load customers for reports page
 async function loadReports() {
-  console.log('loadReports() called');
   try {
     reportCustomers = await apiGet('/customers/');
-    console.log('reportCustomers loaded:', reportCustomers);
     if (!reportCustomers) reportCustomers = [];
     
     // Load customers into dropdown directly
@@ -29,22 +25,13 @@ async function loadReports() {
 // Populate customer dropdown
 function populateCustomerDropdown() {
   const select = document.getElementById('report-customer-filter');
-  console.log('Select element:', select);
-  console.log('reportCustomers:', reportCustomers);
-  
-  if (!select) {
-    console.error('Select element not found');
-    return;
-  }
+  if (!select) return;
   
   select.innerHTML = '<option value="">All Customers</option>';
   if (reportCustomers && reportCustomers.length > 0) {
     reportCustomers.forEach(c => {
       select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
     });
-    console.log('Dropdown populated with', reportCustomers.length, 'customers');
-  } else {
-    console.log('No customers to populate');
   }
 }
 
