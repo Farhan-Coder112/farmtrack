@@ -121,6 +121,9 @@
         <a class="nav-item" data-page="sales" onclick="navigate('sales')">
           <span class="nav-icon">💰</span><span class="nav-label">Sales</span>
         </a>
+        <a class="nav-item" data-page="reports" onclick="navigate('reports')">
+          <span class="nav-icon">📄</span><span class="nav-label">Reports</span>
+        </a>
       </nav>
       <div class="sidebar-footer">
         <div class="user-info" id="sidebar-user">
@@ -435,6 +438,41 @@
           </div>
           <div id="sales-list" class="table-wrapper">
             <div class="loading-spinner"></div>
+          </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="page-reports" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2 class="page-heading">Reports</h2>
+              <p class="page-subheading">Generate PDF reports with customer search</p>
+            </div>
+          </div>
+          
+          <!-- Customer Filter Section -->
+          <div class="filter-bar" style="margin-bottom:1rem">
+            <select id="report-customer-filter" class="input-sm" onchange="loadReportForCustomer()">
+              <option value="">All Customers</option>
+            </select>
+          </div>
+          
+          <!-- Selected Customer Info -->
+          <div id="report-selected-customer" class="hidden">
+            <div class="card" style="margin-bottom: 1.5rem;">
+              <div class="card-header">
+                <h3 class="card-title" id="report-customer-name">Customer Name</h3>
+                <button class="btn-primary" onclick="generateCustomerReport()">📄 Generate PDF Report</button>
+              </div>
+              <div class="card-body" style="padding: 1.5rem;">
+                <div class="stats-grid" id="report-customer-stats">
+                  <!-- Stats will be loaded here -->
+                </div>
+                <div id="report-customer-sales" class="table-wrapper" style="margin-top: 1.5rem;">
+                  <!-- Sales table will be loaded here -->
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1003,6 +1041,7 @@
   <script src="js/inventory.js"></script>
   <script src="js/customers.js"></script>
   <script src="js/sales.js"></script>
+  <script src="js/reports.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>
