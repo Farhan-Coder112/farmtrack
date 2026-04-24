@@ -11,6 +11,7 @@ import Workers from './pages/Workers';
 import Tasks from './pages/Tasks';
 import Expenses from './pages/Expenses';
 import Inventory from './pages/Inventory';
+import Reports from './pages/Reports';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -55,6 +56,7 @@ function App() {
       case 'tasks': return <Tasks />;
       case 'expenses': return <Expenses />;
       case 'inventory': return <Inventory />;
+      case 'reports': return <Reports />;
       default: return <Dashboard navigate={setActivePage} />;
     }
   };

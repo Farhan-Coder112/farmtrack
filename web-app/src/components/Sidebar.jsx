@@ -26,6 +26,7 @@ function Sidebar({ activePage, navigate, onLogout, toggleSidebar }) {
           { id: 'tasks', icon: '✅', label: 'Tasks' },
           { id: 'expenses', icon: '💰', label: 'Expenses' },
           { id: 'inventory', icon: '📦', label: 'Inventory' },
+          { id: 'reports', icon: '📄', label: 'Reports' },
         ].map(item => (
           <a
             key={item.id}
