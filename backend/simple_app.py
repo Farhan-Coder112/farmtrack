@@ -11,7 +11,7 @@ CORS(app)
 
 @app.route("/")
 def index():
-    return send_from_directory(FRONTEND_DIR, "simple_test.html")
+    return send_from_directory(FRONTEND_DIR, "index.html")
 
 @app.route("/main")
 def main():
