@@ -1043,5 +1043,57 @@
   <script src="js/sales.js"></script>
   <script src="js/reports.js"></script>
   <script src="js/dashboard.js"></script>
+
+  <!-- Navigation wrapper functions for inline onclick handlers -->
+  <script>
+    // Show/hide section helper
+    function showSection(sectionId) {
+      // Hide all content sections
+      const sections = ['dashboard-content', 'workers-content', 'tasks-content', 'expenses-content', 'inventory-content'];
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      
+      // Show the requested section
+      const target = document.getElementById(sectionId);
+      if (target) {
+        target.style.display = 'block';
+      } else {
+        console.error('Section not found:', sectionId);
+      }
+      
+      // Update nav button active states
+      document.querySelectorAll('.nav button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+    }
+
+    function showDashboard() { 
+      showSection('dashboard-content');
+      document.querySelector('button[onclick="showDashboard()"]').classList.add('active');
+    }
+    function showWorkers() { 
+      showSection('workers-content');
+      document.querySelector('button[onclick="showWorkers()"]').classList.add('active');
+    }
+    function showTasks() { 
+      showSection('tasks-content');
+      document.querySelector('button[onclick="showTasks()"]').classList.add('active');
+    }
+    function showExpenses() { 
+      showSection('expenses-content');
+      document.querySelector('button[onclick="showExpenses()"]').classList.add('active');
+    }
+    function showInventory() { 
+      showSection('inventory-content');
+      document.querySelector('button[onclick="showInventory()"]').classList.add('active');
+    }
+    function showCrops() { navigate('crops'); }
+    function showCustomers() { navigate('customers'); }
+    function showSales() { navigate('sales'); }
+    function showReports() { navigate('reports'); }
+    function showCompletedCrops() { navigate('completed-crops'); }
+  </script>
 </body>
 </html>

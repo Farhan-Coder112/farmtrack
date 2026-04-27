@@ -115,6 +115,7 @@ const PAGE_TITLES = {
   inventory: '📦 Inventory',
   customers: '👥 Customers',
   sales: '💰 Sales',
+  reports: '📄 Reports',
 };
 
 let currentPage = null;
@@ -149,6 +150,7 @@ function navigate(page) {
     inventory: loadInventory,
     customers: loadCustomers,
     sales: loadSales,
+    reports: loadReports,
   };
   if (loaders[page]) loaders[page]();
 

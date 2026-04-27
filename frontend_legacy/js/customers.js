@@ -45,10 +45,12 @@ function renderCustomers(customers) {
               <td>${c.phone || '—'}</td>
               <td>${c.email || '—'}</td>
               <td>
-                <button class="btn-sm btn-primary" onclick="showCustomerSales(${c.id}, '${c.name.replace(/'/g, "\\'")}')">View Sales</button>
-                <button class="btn-sm btn-warning" onclick="showCustomerRemainingAmount(${c.id}, '${c.name.replace(/'/g, "\\'")}')">Remaining Amount</button>
-                <button class="btn-sm btn-secondary" onclick="editCustomer(${c.id})">Edit</button>
-                <button class="btn-sm btn-danger" onclick="deleteCustomer(${c.id})">Delete</button>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  <button class="btn-sm btn-primary" onclick="showCustomerSales(${c.id}, '${c.name.replace(/'/g, "\\'")}')">View Sales</button>
+                  <button class="btn-sm btn-warning" onclick="showCustomerRemainingAmount(${c.id}, '${c.name.replace(/'/g, "\\'")}')">Remaining</button>
+                  <button class="btn-sm btn-secondary" onclick="editCustomer(${c.id})">Edit</button>
+                  <button class="btn-sm btn-danger" onclick="deleteCustomer(${c.id})">Delete</button>
+                </div>
               </td>
             </tr>`).join('')}
         </tbody>
@@ -123,7 +125,7 @@ async function showCustomerRemainingAmount(customerId, customerName) {
     const title = document.getElementById('customer-sales-title');
     const salesList = document.getElementById('customer-sales-list');
     
-    title.innerHTML = `Remaining Amount for ${customerName}<br><small style="font-size: 0.9rem; font-weight: normal; color: #666;">📞 ${customerPhone}</small>`;
+    title.innerHTML = `Remaining Amount for ${customerName}<div style="margin-top: 8px; font-size: 1rem; font-weight: 500;"><a href="tel:${customerPhone}" style="color: #2ecc71; text-decoration: none;">📞 ${customerPhone}</a></div>`;
     
     if (!sales.length) {
       salesList.innerHTML = `

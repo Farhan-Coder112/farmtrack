@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory
+from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
@@ -18,10 +18,7 @@ from routes.weather import weather_bp
 from routes.customers import customers_bp
 from routes.sales import sales_bp
 
-# Resolve paths
-FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend_legacy"))
-
-app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
+app = Flask(__name__)
 CORS(app)
 
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "farm-secret-key-2024")
@@ -47,7 +44,7 @@ auto_migrate()
 
 @app.route("/")
 def index():
-    return send_from_directory(FRONTEND_DIR, "index.html")
+    return {"message": "🌾 Farm Management API is running!", "version": "1.0.0"}
 
 @app.route("/api")
 def api_info():
